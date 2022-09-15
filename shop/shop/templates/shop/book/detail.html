@@ -1,0 +1,23 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}
+  {{ book.title }}
+{% endblock %}
+{% block content %}
+  <div class="product-detail">
+    <img src="{% if book.image %}{{ book.image.url }}{% else %}
+    {% static "img/no_image.png" %}{% endif %}">
+    <h1>{{ book.title }}</h1>
+    <h2>
+        {{ book.author }}
+    </h2>
+    <p class="price">${{ book.price }}</p>
+    <form action="{% url "cart:cart_add" book.id %}" method="post">
+      {{ cart_product_form }}
+      {% csrf_token %}
+      <input type="submit" value="Добавить в корзину">
+    </form>
+    {{ book.summary|linebreaks }}
+  </div>
+{% endblock %}
