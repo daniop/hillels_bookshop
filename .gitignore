@@ -105,7 +105,7 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+shop/.env
 .venv
 .venv_shop
 .venv_stock

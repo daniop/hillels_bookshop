@@ -1,0 +1,63 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}Ваша корзина{% endblock %}
+
+{% block content %}
+  <h1>Ваша корзина</h1>
+  <table class="cart">
+    <thead>
+      <tr>
+        <th>Image</th>
+        <th>Книга</th>
+        <th>Количество</th>
+        <th>Удалить</th>
+        <th>Цена одной книги</th>
+        <th>Общая цена</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart %}
+        {% with book=item.book %}
+          <tr>
+            <td>
+              <a href="{{ book.get_absolute_url }}">
+                <img src="{% if book.image %}{{ book.image.url }}
+                {% else %}{% static "img/no_image.png" %}{% endif %}">
+              </a>
+            </td>
+            <td>{{ book.title }}</td>
+            <td>
+              <form action="{% url "cart:cart_add" book.id %}" method="post">
+                {{ item.update_quantity_form.quantity }}
+                {{ item.update_quantity_form.override }}
+                <input type="submit" value="Обновить">
+                {% csrf_token %}
+              </form>
+            </td>
+            <td>
+              <form action="{% url "cart:cart_remove" book.id %}" method="post">
+                <input type="submit" value="Удалить">
+                {% csrf_token %}
+              </form>
+            </td>
+            <td class="num">${{ item.price }}</td>
+            <td class="num">${{ item.total_price }}</td>
+          </tr>
+        {% endwith %}
+      {% endfor %}
+      <tr class="total">
+        <td>Всего</td>
+        <td colspan="4"></td>
+        <td class="num">
+          ${{ cart.get_total_price|floatformat:2 }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="text-right">
+    <a href="{% url "shop:book_list" %}" class="button light">Продолжить покупки</a>
+    <a href="{% url "orders:order_create" %}" class="button">Перейти к оплате</a>
+  </p>
+{% endblock %}
