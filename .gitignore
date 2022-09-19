@@ -146,3 +146,4 @@ cython_debug/
 staticfiles/
 
 .DS_Store
+.env

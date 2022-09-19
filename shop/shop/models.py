@@ -39,6 +39,7 @@ class Book(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    book_id_in_stock = models.IntegerField(verbose_name='Номер книги на складе', null=True)
 
     class Meta:
         ordering = ['title', 'author']
