@@ -6,6 +6,7 @@ from django.urls import reverse
 
 from .forms import OrderCreateForm
 from .models import Order, OrderItem
+from .tasks import order_created, order_to_stock
 
 
 def order_create(request):
@@ -22,6 +23,9 @@ def order_create(request):
                                          quantity=item['quantity'])
             # clear the cart
             cart.clear()
+            # send email
+            order_created.delay(order.id)
+            order_to_stock.delay(order.id)
             # set the order in the session
             request.session['order_id'] = order.id
             # redirect for payment

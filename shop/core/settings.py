@@ -147,3 +147,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CART_SESSION_ID = 'cart'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")

@@ -17,13 +17,13 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class OrderSerializer(serializers.HyperlinkedModelSerializer):
-
-    order_items = serializers.HyperlinkedRelatedField(
-        many=True,
-        view_name='order_item-detail',
-        read_only=True
-    )
+    #
+    # order_items = serializers.HyperlinkedRelatedField(
+    #     many=True,
+    #     view_name='order_item-detail',
+    #     read_only=True
+    # )
 
     class Meta:
         model = Order
-        fields = ['email', 'status', 'address', 'order-items']
+        fields = ['email', 'status', 'address', 'order_id_in_shop']

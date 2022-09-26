@@ -34,6 +34,7 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = [
     "0.0.0.0",
     "127.0.0.1",
+    'stock'
 ]
 
 SITE_ID = 1
@@ -163,6 +164,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
 }
 
