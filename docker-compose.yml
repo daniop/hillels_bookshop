@@ -8,24 +8,43 @@ services:
       dockerfile: ./docker/shop/Dockerfile
     volumes:
       - ./shop:/app
-    networks:
-      - shop_db_network
+    env_file:
+      - shop/core/.env
     ports:
       - "8000:8000"
+    networks:
+      - shop_db_network
+      - celery_network
+      - redis_network
     depends_on:
       - db_shop
-    environment:
-      DB_NAME: "shop"
-      DB_USER: "postgres"
-      DB_PASSWORD: "postgres"
-      DB_HOST: "db_shop"
-      DB_PORT: "5432"
     restart: on-failure
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://0.0.0.0:8000/admin/login/"]
       interval: 1m
       timeout: 5s
       retries: 2
+
+
+  celery_shop:
+    container_name: celery_shop
+    build:
+      context: .
+      dockerfile: ./docker/shop/Dockerfile
+    env_file:
+      - shop/core/.env
+    volumes:
+      - ./shop:/app
+    networks:
+      - shop_db_network
+      - celery_network
+      - redis_network
+    depends_on:
+      - db_shop
+      - stock
+      - redis
+    command:
+      - celery -A core worker -B -l INFO
 
   stock:
     container_name: stock
@@ -36,8 +55,11 @@ services:
       - ./stock:/app
     networks:
       - stock_db_network
+      - celery_network
     ports:
       - "8001:8000"
+    expose:
+      - "8000"
     depends_on:
       - db_stock
     environment:
@@ -83,10 +105,16 @@ services:
       POSTGRES_PASSWORD: 'postgres'
       POSTGRES_DB: 'stock'
 
+  redis:
+    image: redis:7-alpine
+    networks:
+      - redis_network
 
 networks:
   shop_db_network:
   stock_db_network:
+  celery_network:
+  redis_network:
 
 volumes:
   db_shop_volume:

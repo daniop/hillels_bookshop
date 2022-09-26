@@ -4,6 +4,12 @@ from shop.models import Book
 
 
 class Order(models.Model):
+    status_choices = (
+        ('in_work', 'В работе'),
+        ('success', 'Успешно отправлен'),
+        ('fail', 'Не отправлен'),
+    )
+
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
@@ -13,6 +19,10 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)
+    status = models.CharField(max_length=15,
+                              choices=status_choices,
+                              default='in_work',
+                              verbose_name='Статус заказа')
 
     class Meta:
         ordering = ['-created']
