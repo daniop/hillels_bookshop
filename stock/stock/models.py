@@ -1,29 +1,6 @@
+from book.models import Book, BookInstance
+
 from django.db import models
-
-
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    isbn = models.CharField(max_length=13)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-
-    def __str__(self):
-        return self.title
-
-
-class BookInstance(models.Model):
-    place_choices = (
-        ('top_cab', 'Верхний шкаф'),
-        ('bottom_cab', 'Нижний шкаф'),
-    )
-
-    book_obj = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
-    place = models.CharField(max_length=15,
-                             choices=place_choices,
-                             default='top_cab',
-                             verbose_name='Место хранения')
-
-    def __str__(self):
-        return str(self.id)
 
 
 class Order(models.Model):
@@ -46,6 +23,8 @@ class Order(models.Model):
                               choices=status_choices,
                               default='in_work',
                               verbose_name='Статус заказа')
+    book_inst = models.ManyToManyField(BookInstance, blank=True)
+    change_status = models.BooleanField(default=False, verbose_name='Обновить книги')
 
     class Meta:
         ordering = ['-created']
@@ -60,16 +39,22 @@ class Order(models.Model):
         total_cost = sum(item.get_cost() for item in self.items.all())
         return total_cost
 
+    def save(self, *args, **kwargs):
+        super(Order, self).save(*args, **kwargs)
+        if self.change_status:
+            for book in self.book_inst.all():
+                book.update_status()
+        self.change_status = False
+
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
-    book_obj = models.ForeignKey(Book, related_name='order_items', on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, related_name='orderitems', on_delete=models.CASCADE)
+    book_obj = models.ForeignKey(Book, on_delete=models.CASCADE)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField(default=1)
-    book_inst = models.ManyToManyField(BookInstance)
 
     def __str__(self):
-        return str(self.id)
+        return str(self.book_obj.title)
 
     def get_cost(self):
         return self.price * self.quantity

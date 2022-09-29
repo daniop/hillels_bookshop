@@ -6,6 +6,9 @@ from django.core.mail import send_mail
 
 import requests
 
+from shop.models import Author, Book, Genre
+
+
 from .models import Order
 
 
@@ -29,20 +32,68 @@ def order_created(order_id):
 
 @shared_task
 def order_to_stock(order_id):
-    """
-    Task to send an e-mail notification when an order is
-    successfully created.
-    """
     order = Order.objects.get(pk=order_id)
     key = os.environ.get('TOKEN_KEY')
     headers = {
         'Authorization': 'Token ' + key,
     }
-    url = 'http://stock:8000/orders/'
+    url = 'http://stock:8000/api/orders/'
+    order_items_list = []
+    for item in order.items.all():
+        temp_dict = dict()
+        temp_dict['price'] = str(item.price)
+        temp_dict['quantity'] = item.quantity
+        temp_dict['book_obj'] = item.books.book_id_in_stock
+        order_items_list.append(temp_dict)
     params = {
         'email': order.email,
         'address': order.address,
         'order_id_in_shop': order.id,
-        'order_items': order.items
+        'first_name': order.first_name,
+        'last_name': order.last_name,
+        'city': order.city,
+        'postal_code': order.postal_code,
+        'orderitems': order_items_list,
     }
-    requests.post(url, data=params, headers=headers)
+    requests.post(url, json=params, headers=headers)
+
+
+@shared_task
+def update_genre():
+    url = 'http://stock:8000/api/genres/'
+    r = requests.get(url).json()
+    create_list = []
+    for genre in r['results']:
+        if not Genre.objects.filter(name=genre['name']).exists():
+            create_list.append(Genre(name=genre['name']))
+    Genre.objects.bulk_create(create_list)
+
+
+@shared_task
+def update_author():
+    url = 'http://stock:8000/api/authors/'
+    r = requests.get(url).json()
+    create_list = []
+    for author in r['results']:
+        if not Author.objects.filter(first_name=author['first_name'], last_name=author['last_name']).exists():
+            create_list.append(Author(first_name=author['first_name'], last_name=author['last_name']))
+    Author.objects.bulk_create(create_list)
+
+
+@shared_task
+def update_books():
+    url = 'http://stock:8000/api/books/'
+    r = requests.get(url).json()
+    for book in r['results']:
+        if not Book.objects.filter(isbn=book['isbn']).exists():
+            author = book['author'].split(', ')
+            new_book = Book.objects.create(
+                title=book['title'],
+                author=Author.objects.get(first_name=author[1], last_name=author[0]),
+                summary=book['summary'],
+                isbn=book['isbn'],
+                price=book['price'],
+                book_id_in_stock=book['id'],
+                )
+            for genre in book['genre']:
+                new_book.genre.add(Genre.objects.get(name=genre['name']))

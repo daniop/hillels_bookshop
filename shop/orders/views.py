@@ -1,5 +1,6 @@
 from cart.cart import Cart
 
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -28,8 +29,8 @@ def order_create(request):
             order_to_stock.delay(order.id)
             # set the order in the session
             request.session['order_id'] = order.id
-            # redirect for payment
-            return redirect(reverse('payment:process'))
+            messages.success(request, f'Заказ с номером {order.id} будет скоро обработан')
+            return redirect(reverse('shop:book_list'))
     else:
         form = OrderCreateForm()
     return render(request,

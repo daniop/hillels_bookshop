@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
+
 import environ
 
 
@@ -51,6 +53,8 @@ INSTALLED_APPS = [
     'orders',
     'payment',
     'shop',
+
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
@@ -146,8 +150,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CART_SESSION_ID = 'cart'
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# MAILHOG
+EMAIL_HOST = 'smtp-server'  # Your Mailhog Host
+EMAIL_PORT = '1025'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
+# CELERY
+CELERY_TIMEZONE = "Europe/Kiev"
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+CELERY_BEAT_SCHEDULE = {
+    'update_genres_every_min': {
+        'task': 'orders.tasks.update_genre',
+        'schedule': crontab(minute='*/1'),
+    },
+    'update_author_every_min': {
+        'task': 'orders.tasks.update_author',
+        'schedule': crontab(minute='*/1'),
+    },
+    'update_book_every_min': {
+        'task': 'orders.tasks.update_books',
+        'schedule': crontab(minute='*/1'),
+    }
+}
