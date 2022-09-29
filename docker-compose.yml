@@ -26,7 +26,7 @@ services:
       retries: 2
 
 
-  celery_shop:
+  celery_shop: &celery_shop
     container_name: celery_shop
     build:
       context: .
@@ -44,7 +44,14 @@ services:
       - stock
       - redis
     command:
-      - celery -A core worker -B -l INFO
+      - celery -A core worker -l INFO
+
+  celery_beat:
+    <<: *celery_shop
+    container_name: celery_beat
+    command:
+      - celery -A core beat -l INFO
+
 
   stock:
     container_name: stock
@@ -109,6 +116,17 @@ services:
     image: redis:7-alpine
     networks:
       - redis_network
+
+  smtp-server:
+    image: mailhog/mailhog
+    expose:
+      - 1025
+      - 8025
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    networks:
+      - celery_network
 
 networks:
   shop_db_network:

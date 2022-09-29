@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'stock',
+    'book',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -58,6 +59,10 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'dj_rest_auth.registration',
+
+    'django_extensions',
+
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -177,3 +182,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
