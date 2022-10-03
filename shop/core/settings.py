@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
 
     'cart',
     'orders',
@@ -55,6 +56,8 @@ INSTALLED_APPS = [
     'shop',
 
     'django_extensions',
+    'django_filters',
+    'bootstrapform',
 ]
 
 MIDDLEWARE = [

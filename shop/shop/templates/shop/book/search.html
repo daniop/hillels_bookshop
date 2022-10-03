@@ -1,0 +1,36 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}Поиск{% endblock %}
+
+{% block content %}
+  {% if query %}
+    <h1>Книги по запросу"{{ query }}"</h1>
+    <h3>
+      {% with results.count as total_results %}
+        Found {{ total_results }} result{{ total_results|pluralize }}
+      {% endwith %}
+    </h3>
+    <div id="main" class="product-list">
+        {% for book in results %}
+          <div class="item">
+            <a href="{{ book.get_absolute_url }}">
+              <img src="{% if book.image %}{{ book.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+            </a>
+            <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>  от {{ book.author }}
+            <br>
+            ${{ book.price }}
+          </div>
+        {% empty %}
+        <p>По вашему запросу нет результата</p>
+         {% endfor %}
+  </div>
+    <p><a href="{% url "shop:book_search" %}">Искать еще раз</a></p>
+  {% else %}
+    <h1>Поиск книг</h1>
+    <form method="get">
+      {{ form.as_p }}
+      <input type="submit" value="Search">
+    </form>
+  {% endif %}
+{% endblock %}

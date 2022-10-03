@@ -96,4 +96,5 @@ def update_books():
                 book_id_in_stock=book['id'],
                 )
             for genre in book['genre']:
-                new_book.genre.add(Genre.objects.get(name=genre['name']))
+                genre = Genre.objects.get(name=genre)
+                new_book.genre.add(genre)
