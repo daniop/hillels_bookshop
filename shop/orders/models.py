@@ -10,12 +10,12 @@ class Order(models.Model):
         ('fail', 'Не отправлен'),
     )
 
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    first_name = models.CharField(max_length=50, verbose_name='Имя')
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия')
     email = models.EmailField()
-    address = models.CharField(max_length=250)
-    postal_code = models.CharField(max_length=20)
-    city = models.CharField(max_length=100)
+    address = models.CharField(max_length=250, verbose_name='Адрес')
+    postal_code = models.CharField(max_length=20, verbose_name='Индекс')
+    city = models.CharField(max_length=100, verbose_name='Город')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField(default=False)

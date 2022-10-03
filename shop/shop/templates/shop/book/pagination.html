@@ -1,0 +1,8 @@
+<div class="d-flex justify-content-end mb-4">
+    {% if page_obj.has_previous %}
+      <a class="btn btn-secondary text-uppercase" href="?page={{ page_obj.previous_page_number }}">Назад</a>
+    {% endif %}
+    {% if page_obj.has_next %}
+      <a class="btn btn-primary text-uppercase" href="?page={{ page_obj.next_page_number }}">Вперед</a>
+    {% endif %}
+</div>

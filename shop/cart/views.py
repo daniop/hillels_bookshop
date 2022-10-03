@@ -6,6 +6,9 @@ from shop.models import Book
 from .cart import Cart
 from .forms import CartAddProductForm
 
+from shop.forms import SearchForm
+from shop.models import Genre
+
 
 @require_POST
 def cart_add(request, pk):
@@ -30,6 +33,8 @@ def cart_remove(request, pk):
 
 def cart_detail(request):
     cart = Cart(request)
+    search_form = SearchForm()
+    genres = Genre.objects.all()
     for item in cart:
         item['update_quantity_form'] = CartAddProductForm(initial={
                             'quantity': item['quantity'],
@@ -37,4 +42,6 @@ def cart_detail(request):
 
     return render(request,
                   'cart/detail.html',
-                  {'cart': cart})
+                  {'cart': cart,
+                   'search_form': search_form,
+                   'genres': genres})
