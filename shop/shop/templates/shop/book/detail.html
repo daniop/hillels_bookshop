@@ -1,23 +1,81 @@
 {% extends "shop/base.html" %}
 {% load static %}
+{% load bootstrap %}
 
-{% block title %}
-  {{ book.title }}
-{% endblock %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block header %}{{ book.title }}{% endblock %}
+{% block subheader %}Детали{% endblock %}
+
 {% block content %}
-  <div class="product-detail">
-    <img src="{% if book.image %}{{ book.image.url }}{% else %}
-    {% static "img/no_image.png" %}{% endif %}">
-    <h1>{{ book.title }}</h1>
-    <h2>
-        {{ book.author }}
-    </h2>
-    <p class="price">${{ book.price }}</p>
-    <form action="{% url "cart:cart_add" book.id %}" method="post">
-      {{ cart_product_form }}
-      {% csrf_token %}
-      <input type="submit" value="Добавить в корзину">
-    </form>
-    {{ book.summary|linebreaks }}
-  </div>
+
+    <!-- Shop Detail Start -->
+    <div class="container-fluid py-5">
+        <div class="row px-xl-5">
+            <div class="col-lg-5 pb-5">
+                <div id="product-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner border">
+                        <div class="carousel-item active">
+                            <img class="w-100 h-100" src="{% if book.image %}{{ book.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" alt="">
+                        </div>
+                    </div>
+                    <a class="carousel-control-prev" href="#product-carousel" data-slide="prev">
+                        <i class="fa fa-2x fa-angle-left text-dark"></i>
+                    </a>
+                    <a class="carousel-control-next" href="#product-carousel" data-slide="next">
+                        <i class="fa fa-2x fa-angle-right text-dark"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-7 pb-5">
+                <h3 class="font-weight-semi-bold">{{ book.title}}</h3>
+                <p>от {{ book.author }}</p>
+                <h3 class="font-weight-semi-bold mb-4">{{ book.price }} грн</h3>
+                <div class="d-flex mb-3">
+                    <p class="text-dark font-weight-medium mb-0 mr-3">Жанры:</p>
+                    {% for g in book.genre.all %}
+                        <p><a href="{% url 'shop:books_by_genre' g.id %}">#{{ g.name }}</a>{% if not forloop.last %}; {% endif %}</p>
+                    {% endfor %}
+                </div>
+                <div class="d-flex align-items-center mb-4 pt-2">
+                        <form action="{% url "cart:cart_add" book.id %}" method="post">
+                          {{ cart_product_form|bootstrap }}
+                          {% csrf_token %}
+                            <button class="btn btn-primary px-3"><i class="fa fa-shopping-cart mr-1"></i>В корзину</button>
+                        </form>
+                </div>
+                <div class="d-flex pt-2">
+                    <p class="text-dark font-weight-medium mb-0 mr-2">Share on:</p>
+                    <div class="d-inline-flex">
+                        <a class="text-dark px-2" href="">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a class="text-dark px-2" href="">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a class="text-dark px-2" href="">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a class="text-dark px-2" href="">
+                            <i class="fab fa-pinterest"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row px-xl-5">
+            <div class="col">
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="tab-pane-1">
+                        <h4 class="mb-3">Описание книги: </h4>
+                        <p>{{ book.summary }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Shop Detail End -->
 {% endblock %}
+
+
+

@@ -1,31 +1,42 @@
 {% extends "shop/base.html" %}
 {% load static %}
+{% load bootstrap %}
 
 {% block title %}Поиск{% endblock %}
-
+{% block header %}Поиск{% endblock %}
+{% block subheader %}{{ query }}: (Найдено {{ results.count}} книг){% endblock %}
 {% block content %}
   {% if query %}
-    <h1>Книги по запросу"{{ query }}"</h1>
-    <h3>
-      {% with results.count as total_results %}
-        Found {{ total_results }} result{{ total_results|pluralize }}
-      {% endwith %}
-    </h3>
-    <div id="main" class="product-list">
-        {% for book in results %}
-          <div class="item">
-            <a href="{{ book.get_absolute_url }}">
-              <img src="{% if book.image %}{{ book.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
-            </a>
-            <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>  от {{ book.author }}
-            <br>
-            ${{ book.price }}
-          </div>
-        {% empty %}
-        <p>По вашему запросу нет результата</p>
-         {% endfor %}
+       <div class="col-lg-9 col-md-12">
+                <div class="row pb-3">
+                    {% for book in results %}
+                    <div class="col-lg-4 col-md-6 col-sm-12 pb-1">
+                        <div class="card product-item border-0 mb-4">
+                            <div class="card-header product-img position-relative overflow-hidden bg-transparent border p-0">
+                                <a href="{{ book.get_absolute_url }}">
+                                <img class="img-fluid w-100" src="{% if book.image %}{{ book.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}" alt="">
+                                </a>
+                            </div>
+                            <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
+                                <h6 class="text-truncate mb-3"><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h6>
+                                <p class="text-truncate mb-3">от {{ book.author }}</p>
+                                <div class="d-flex justify-content-center">
+                                    <h6>{{ book.price }} грн.</h6>
+                                </div>
+                            </div>
+                            <div class="card-footer d-flex justify-content-between bg-light border">
+                                <a href="{{ book.get_absolute_url }}" class="btn btn-sm text-dark p-0"><i class="fas fa-eye text-primary mr-1"></i>View Detail</a>
+                                <form action="{% url "cart:cart_add" book.id %}" method="post">
+                                    {{ cart_product_form|bootstrap }}
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm text-dark p-0"><i class="fas fa-shopping-cart text-primary mr-1"></i>В корзину</button>
+                                </form>                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                <p>По вашему запросу нет результата</p>
+                 {% endfor %}
   </div>
-    <p><a href="{% url "shop:book_search" %}">Искать еще раз</a></p>
   {% else %}
     <h1>Поиск книг</h1>
     <form method="get">
