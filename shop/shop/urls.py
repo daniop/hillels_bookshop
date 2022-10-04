@@ -7,6 +7,9 @@ app_name = 'shop'
 urlpatterns = [
     path('', views.BookListView.as_view(), name='book_list'),
     path('<int:pk>/', views.BookDetailView.as_view(), name='book_detail'),
+    path('<int:pk>/comment/', views.book_review, name='book_review'),
     path('genres/<int:pk>/', views.BookListGenreView.as_view(), name='books_by_genre'),
-    path('search/', views.book_search, name='book_search')
+    path('search/', views.book_search, name='book_search'),
+    path('contact/', views.contact_form, name='contact'),
+
 ]

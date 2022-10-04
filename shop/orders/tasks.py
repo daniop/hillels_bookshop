@@ -2,12 +2,13 @@ import os
 
 from celery import shared_task
 
+from decimal import Decimal
+
 from django.core.mail import send_mail
 
 import requests
 
 from shop.models import Author, Book, Genre
-
 
 from .models import Order
 
@@ -81,7 +82,7 @@ def update_author():
 
 
 @shared_task
-def update_books():
+def create_books():
     url = 'http://stock:8000/api/books/'
     r = requests.get(url).json()
     for book in r['results']:
@@ -94,7 +95,46 @@ def update_books():
                 isbn=book['isbn'],
                 price=book['price'],
                 book_id_in_stock=book['id'],
-                )
+                quantity_in_stock=len(book['bookinstances']),
+                available=True if len(book['bookinstances']) else False
+            )
             for genre in book['genre']:
                 genre = Genre.objects.get(name=genre)
                 new_book.genre.add(genre)
+
+
+@shared_task
+def update_books():
+    url = 'http://stock:8000/api/books/'
+    r = requests.get(url).json()
+    for book in r['results']:
+        if Book.objects.filter(isbn=book['isbn']).exists():
+            Book.objects.filter(isbn=book['isbn']).update(
+                title=book['title'],
+                summary=book['summary'],
+                price=book['price'],
+                book_id_in_stock=book['id'],
+                quantity_in_stock=len(book['bookinstances']),
+                available=True if len(book['bookinstances']) else False)
+
+
+# @shared_task
+# def update_books():
+#     url = 'http://stock:8000/api/books/'
+#     r = requests.get(url).json()
+#     update_list = []
+#     for book in r['results']:
+#         if Book.objects.filter(isbn=book['isbn']).exists():
+#             obj = Book.objects.get(isbn=book['isbn'])
+#             obj.title = book['title'],
+#             obj.summary = book['summary'],
+#             obj.price = book['price'],
+#             obj.book_id_in_stock = book['id'],
+#             obj.quantity_in_stock = len(book['bookinstances']),
+#             obj.available = True if len(book['bookinstances']) else False
+#             update_list.append(obj)
+#     Book.objects.bulk_update(
+#         update_list,
+#         ['title', 'author', 'summary', 'price', 'book_id_in_stock', 'quantity_in_stock', 'available'],
+#         batch_size=1000
+#     )

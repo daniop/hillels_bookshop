@@ -1,0 +1,17 @@
+{% extends "shop/base.html" %}
+
+{% block title %}Отзыв{% endblock %}
+{% block header %}Отзыв{% endblock %}
+{% block subheader %}Отзыв на книгу <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>{% endblock %}
+{% block description %}Ваш отзыв на рассмотрении{% endblock %}
+
+{% block content %}
+  {% if review %}
+      <div class="d-grid gap-2 container px-4 px-lg-5">
+          <h2 align="center">Ваш отзыв скоро будет добавлен</h2>
+          <p align="center"><a href="{{ book.get_absolute_url }}">Вернуться к Книге</a></p>
+      </div>
+  {% else %}
+    {% include "shop/book/review_form.html" %}
+  {% endif %}
+{% endblock %}

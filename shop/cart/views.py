@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -17,6 +18,9 @@ def cart_add(request, pk):
     form = CartAddProductForm(request.POST)
     if form.is_valid():
         cd = form.cleaned_data
+        if cd['quantity'] > book.quantity_in_stock:
+            messages.warning(request, f'Книга {book.title} доступна в {book.quantity_in_stock} экземплярах')
+            return redirect('shop:book_detail', book.id)
         cart.add(book=book,
                  quantity=cd['quantity'],
                  override_quantity=cd['override'])
@@ -37,8 +41,8 @@ def cart_detail(request):
     genres = Genre.objects.all()
     for item in cart:
         item['update_quantity_form'] = CartAddProductForm(initial={
-                            'quantity': item['quantity'],
-                            'override': True})
+            'quantity': item['quantity'],
+            'override': True})
 
     return render(request,
                   'cart/detail.html',

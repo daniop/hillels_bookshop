@@ -1,0 +1,13 @@
+<form method="post" action="{% url 'shop:contact' %}" class="js-contact-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Напишите нам</h4>
+  </div>
+  <div class="modal-body">
+    {% include 'shop/book/contact_form.html' %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+    <button type="submit" class="btn btn-primary">Отправить отзыв</button>
+  </div>
+</form>
