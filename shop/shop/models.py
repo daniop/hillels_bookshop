@@ -1,6 +1,8 @@
 from django.db import models
 from django.urls import reverse
 
+from .tasks import review_active
+
 
 class Author(models.Model):
     """Model representing an author."""
@@ -40,6 +42,7 @@ class Book(models.Model):
     updated = models.DateTimeField(auto_now=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     book_id_in_stock = models.IntegerField(verbose_name='Номер книги на складе', null=True)
+    quantity_in_stock = models.IntegerField(verbose_name='Количество книг на складе', null=True)
 
     class Meta:
         ordering = ['title', 'author']
@@ -57,3 +60,31 @@ class Book(models.Model):
     def get_absolute_url(self):
         """Returns the url to access a particular book instance."""
         return reverse('shop:book_detail', args=[str(self.id)])
+
+
+class Review(models.Model):
+    book = models.ForeignKey(Book,
+                             on_delete=models.CASCADE,
+                             related_name='reviews')
+    name = models.CharField(max_length=80, verbose_name='Ваше имя')
+    email = models.EmailField(max_length=250, verbose_name='E-mail')
+    body = models.TextField(verbose_name='Сообщение')
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+    active = models.BooleanField(default=False)
+
+    class Meta:
+        ordering = ['created']
+        indexes = [
+            models.Index(fields=['created']),
+        ]
+
+    def __str__(self):
+        return f'Review by {self.name} on {self.book}'
+
+    def save(self, *args, **kwargs):
+        super(Review, self).save(*args, **kwargs)
+        link = self.book.get_absolute_url()
+        if self.active:
+            message = f'Новый отзыв к книге {self.book.title} от {self.name}. {link}'
+            review_active.delay("New reiew", self.email, message)

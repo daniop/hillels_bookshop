@@ -7,6 +7,10 @@ class GenreInline(admin.TabularInline):
     model = Book.genre.through
 
 
+class BookInstInline(admin.TabularInline):
+    model = BookInstance
+
+
 @admin.register(Genre)
 class GenreAdmin(admin.ModelAdmin):
     list_display = ['name']
@@ -19,6 +23,7 @@ class BookAdmin(admin.ModelAdmin):
     list_editable = ['price', 'available']
     inlines = [
         GenreInline,
+        BookInstInline,
     ]
     exclude = ['genre']
 

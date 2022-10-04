@@ -1,5 +1,7 @@
 from book.models import Author, Book, BookInstance, Genre
 
+from django.db.models import Prefetch
+
 from rest_framework import permissions
 from rest_framework import viewsets
 
@@ -9,12 +11,15 @@ from .serializers import AuthorSerializer, BookInstSerializer, BookSerializer, G
 
 
 class BookViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.prefetch_related(
+            Prefetch('bookinstances', queryset=BookInstance.objects.filter(status='available'))
+        )
 
 
 class BookInstViewSet(viewsets.ModelViewSet):

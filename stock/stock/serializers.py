@@ -17,12 +17,8 @@ class GenreSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['name']
 
 
-class BookSerializer(serializers.HyperlinkedModelSerializer):
-    bookinstances = serializers.HyperlinkedRelatedField(
-        many=True,
-        view_name='bookinstance-detail',
-        read_only=True,
-    )
+class BookSerializer(serializers.ModelSerializer):
+    bookinstances = serializers.StringRelatedField(many=True)
     author = serializers.CharField(read_only=True)
     genre = serializers.StringRelatedField(read_only=True, many=True)
 
@@ -31,7 +27,7 @@ class BookSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'title', 'isbn', 'price', 'genre', 'summary', 'author', 'bookinstances']
 
 
-class BookInstSerializer(serializers.HyperlinkedModelSerializer):
+class BookInstSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BookInstance

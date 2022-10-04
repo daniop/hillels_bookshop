@@ -175,6 +175,10 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'orders.tasks.update_author',
         'schedule': crontab(minute='*/1'),
     },
+    'create_book_every_two_min': {
+        'task': 'orders.tasks.create_books',
+        'schedule': crontab(minute='*/2'),
+    },
     'update_book_every_min': {
         'task': 'orders.tasks.update_books',
         'schedule': crontab(minute='*/1'),

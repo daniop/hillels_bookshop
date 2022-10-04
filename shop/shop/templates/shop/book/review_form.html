@@ -1,0 +1,9 @@
+{% load bootstrap %}
+
+<form action="{% url "shop:book_review" book.id %}" method="post">
+    {% csrf_token %}
+    {{ form|bootstrap }}
+    <div class="form-group mb-0">
+        <input type="submit" value="Оставить отзыв" class="btn btn-primary px-3">
+    </div>
+</form>
