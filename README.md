@@ -10,7 +10,7 @@
 - email notification;
 - filter, sorting, search;
 - contact form;
-- celery, celery beat;
+- celery, celery beat, redis;
 - flower, swagger, pgadmin, mailhog;
 
 
