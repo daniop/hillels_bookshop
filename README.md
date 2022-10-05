@@ -11,7 +11,7 @@
 - filter, sorting, search;
 - contact form;
 - celery, celery beat;
-- flower, swagger, pgadmin;
+- flower, swagger, pgadmin, mailhog;
 
 
 You will need to do that for launch:
