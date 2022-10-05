@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.contrib.auth.views import PasswordResetCompleteView, PasswordResetConfirmView, PasswordResetDoneView,\
     PasswordResetView
 from django.urls import include, path
+
 from shop import views
 
 urlpatterns = (
@@ -50,4 +51,5 @@ urlpatterns = (
     path('cart/', include('cart.urls', namespace='cart')),
     path('orders/', include('orders.urls', namespace='orders')),
     path('', include('shop.urls', namespace='shop')),
+    path('__debug__/', include('debug_toolbar.urls')),
 )

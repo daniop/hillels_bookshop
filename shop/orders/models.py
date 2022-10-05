@@ -1,6 +1,6 @@
 from django.db import models
 
-from shop.models import Book, Client
+from shop.models import Book, Client  # noqa: F401
 
 
 class Order(models.Model):
@@ -39,7 +39,6 @@ class Order(models.Model):
     def get_total_cost(self):
         total_cost = sum(item.get_cost() for item in self.items.all())
         return total_cost
-
 
 
 class OrderItem(models.Model):

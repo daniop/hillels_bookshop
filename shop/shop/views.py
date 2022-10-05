@@ -8,16 +8,17 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.postgres.search import SearchVector
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, render
 from django.template.loader import render_to_string
+from django.urls import reverse_lazy
 from django.views import generic
 from django.views.decorators.http import require_POST
-from django.urls import reverse_lazy
+
 
 from .filters import BookFilter
 from .forms import ClientCreationForm, ContactForm, LoginForm, ReviewForm, SearchForm
-from .models import Author, Client, Book, Genre
-from .tasks import send_contact, new_review
+from .models import Author, Book, Client, Genre
+from .tasks import new_review, send_contact
 
 
 class BookListView(generic.ListView):
@@ -49,7 +50,7 @@ class BookListView(generic.ListView):
             sort = 'created'
         elif sort_by == 'datedown':
             sort = '-created'
-        return BookFilter(self.request.GET, queryset=queryset).qs.order_by(sort)
+        return BookFilter(self.request.GET, queryset=queryset).qs.order_by(sort).select_related('author')
 
 
 class BookListGenreView(generic.ListView):
@@ -69,19 +70,20 @@ class BookListGenreView(generic.ListView):
     def get_queryset(self):
         queryset = super().get_queryset().filter(genre__id=self.kwargs['pk'])
         sort_by = self.request.GET.get('sort')
+        sort = 'created'
         if sort_by == 'priceup':
-            queryset = queryset.order_by('price')
+            sort = 'price'
         elif sort_by == 'pricedown':
-            queryset = queryset.order_by('-price')
+            sort = '-price'
         elif sort_by == 'nameup':
-            queryset = queryset.order_by('title')
+            sort = 'title'
         elif sort_by == 'namedown':
-            queryset = queryset.order_by('-title')
+            sort = '-title'
         elif sort_by == 'dateup':
-            queryset = queryset.order_by('created')
+            sort = 'created'
         elif sort_by == 'datedown':
-            queryset = queryset.order_by('-created')
-        return BookFilter(self.request.GET, queryset=queryset).qs
+            sort = '-created'
+        return BookFilter(self.request.GET, queryset=queryset).qs.order_by(sort).select_related('author')
 
 
 class BookListAuthorView(generic.ListView):
@@ -113,7 +115,7 @@ class BookListAuthorView(generic.ListView):
             queryset = queryset.order_by('created')
         elif sort_by == 'datedown':
             queryset = queryset.order_by('-created')
-        return BookFilter(self.request.GET, queryset=queryset).qs
+        return BookFilter(self.request.GET, queryset=queryset).qs.select_related('author')
 
 
 class BookDetailView(generic.DetailView):

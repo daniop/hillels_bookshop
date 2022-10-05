@@ -2,13 +2,11 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
-from shop.models import Book
+from shop.forms import SearchForm
+from shop.models import Book, Genre
 
 from .cart import Cart
 from .forms import CartAddProductForm
-
-from shop.forms import SearchForm
-from shop.models import Genre
 
 
 @require_POST

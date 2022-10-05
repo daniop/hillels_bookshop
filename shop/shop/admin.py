@@ -42,8 +42,7 @@ class ClientAdmin(UserAdmin):
     form = ClientChangeForm
     list_display = ('email', 'username', 'is_staff', 'is_active', 'last_name')
     list_filter = ('email', 'username', 'is_staff', 'is_active',)
-    search_fields = ['username', 'email','last_name']
-    
+    search_fields = ['username', 'email', 'last_name']
     fieldsets = (
         (None, {'fields': ('email', 'password',)}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
@@ -59,4 +58,3 @@ class ClientAdmin(UserAdmin):
             'fields': ('username', 'password1', 'password2', 'email',),
         }),
     )
-

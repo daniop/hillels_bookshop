@@ -128,6 +128,41 @@ services:
     networks:
       - celery_network
 
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    networks:
+      - celery_network
+      - redis_network
+      - stock_db_network
+      - shop_db_network
+    restart: unless-stopped
+
+  flower:
+    image: mher/flower:0.9.5
+    container_name: flower
+    networks:
+      - celery_network
+      - redis_network
+      - shop_db_network
+      - stock_db_network
+    expose:
+      - 5555
+    ports:
+      - '5555:5555'
+    depends_on:
+      - celery_shop
+      - redis
+      - celery_beat
+      - db_shop
+      - db_stock
+    command: ["celery -A flower --loglevel=info", "--broker=redis://redis:6379/0", "--broker_api=redis://redis:6379/0" ]
+
 networks:
   shop_db_network:
   stock_db_network:
