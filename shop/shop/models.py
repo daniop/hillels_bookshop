@@ -1,3 +1,4 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.urls import reverse
 
@@ -87,4 +88,17 @@ class Review(models.Model):
         link = self.book.get_absolute_url()
         if self.active:
             message = f'Новый отзыв к книге {self.book.title} от {self.name}. {link}'
-            review_active.delay("New reiew", self.email, message)
+            review_active.delay("New review", self.email, message)
+
+
+class Client(AbstractUser):
+    email = models.EmailField(unique=True)
+    address = models.CharField(max_length=80, verbose_name='Ваш адрес.')
+    first_name = models.CharField(max_length=80, verbose_name='Ваше имя')
+    last_name = models.CharField(max_length=80, verbose_name='Ваша фамилия')
+    city = models.CharField(max_length=80, verbose_name='Ваш город')
+    postal_code = models.IntegerField(verbose_name='Индекс', null=True)
+    is_staff = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.username

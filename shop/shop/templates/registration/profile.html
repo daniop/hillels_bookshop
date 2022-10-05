@@ -1,0 +1,67 @@
+{% extends "shop/base.html" %}
+{% block title %} Мой профиль {% endblock %}
+
+{% block header %}Профиль {{ object.username }}{% endblock %}
+{% block subheader %}{{ object.username }}{% endblock %}
+
+{% block content %}
+    <div class="container-fluid pt-5">
+        <hr>
+        <div class="text-center">
+        </div>
+        {% if object.first_name %}
+            <p>Имя: {{ object.first_name }}</p>
+            <hr>
+        {% endif %}
+        {% if object.last_name %}
+            <p>Фамилия: {{ object.last_name }}</p>
+            <hr>
+        {% endif %}
+        <p>Почта: {{ object.email }}</p>
+        <hr>
+        {% if object.city %}
+            <p> Город: {{ object.city }}</p>
+            <hr>
+        {% endif %}
+        {% if object.postal_code %}
+            <p> Индекс: {{ object.postal_code }}</p>
+            <hr>
+        {% endif %}
+        {% if object.address %}
+            <p> Адрес: {{ object.address }}</p>
+            <hr>
+        {% endif %}
+        <a class="btn btn-primary" href="{% url "update_profile" %}">Обновить профиль</a>
+
+    <div class="row justify-content-center">
+
+    <div class="col-auto">
+        <h3 class="text-center">Мои заказы:</h3>
+                <table class="table table-bordered text-center mb-0">
+                    <thead class="bg-secondary text-dark">
+                        <tr>
+                            <th>Номер заказа</th>
+                            <th>Дата создания</th>
+                            <th>Статус</th>
+                        </tr>
+                    </thead>
+                    <tbody class="align-middle">
+                    {% for order in orders %}
+                      <tr>
+                        <td class="align-middle">{{ order.id }}</td>
+                        <td class="align-middle">{{ order.created }}</td>
+                          {% if order.status == 'in_work' %}
+                              <td class="align-middle"><span class="badge bg-warning text-dark">В работе</span></td>
+                          {% elif order.status == 'success' %}
+                              <td class="align-middle"><span class="badge bg-success text-dark">Заказ отправлен</span></td>
+                          {% elif order.status == 'fail' %}
+                              <td class="align-middle"><span class="badge bg-danger">Заказ не выполнен</span></td>
+                          {% endif %}
+                      </tr>
+                  {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+    </div>
+    </div>
+{% endblock %}

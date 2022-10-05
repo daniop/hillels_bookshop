@@ -38,10 +38,17 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+AUTH_USER_MODEL = 'shop.Client'
+
 
 # Application definition
 
 INSTALLED_APPS = [
+    'shop',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,8 +59,6 @@ INSTALLED_APPS = [
 
     'cart',
     'orders',
-    'payment',
-    'shop',
 
     'django_extensions',
     'django_filters',
@@ -182,5 +187,9 @@ CELERY_BEAT_SCHEDULE = {
     'update_book_every_min': {
         'task': 'orders.tasks.update_books',
         'schedule': crontab(minute='*/1'),
-    }
+    },
+    'update_order_every_min': {
+        'task': 'orders.tasks.update_orders',
+        'schedule': crontab(minute='*/1'),
+    },
 }

@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-from .models import Author, Book, Genre, Review
+from .forms import ClientChangeForm, ClientCreationForm
+from .models import Author, Book, Client, Genre, Review
 
 
 @admin.action(description='Одобрить отзыв')
@@ -31,3 +33,30 @@ class ReviewAdmin(admin.ModelAdmin):
     list_filter = ['active', 'created', 'updated']
     search_fields = ['name', 'email', 'body']
     actions = [make_active]
+
+
+@admin.register(Client)
+class ClientAdmin(UserAdmin):
+    model = Client
+    add_form = ClientCreationForm
+    form = ClientChangeForm
+    list_display = ('email', 'username', 'is_staff', 'is_active', 'last_name')
+    list_filter = ('email', 'username', 'is_staff', 'is_active',)
+    search_fields = ['username', 'email','last_name']
+    
+    fieldsets = (
+        (None, {'fields': ('email', 'password',)}),
+        ('Permissions', {'fields': ('is_staff', 'is_active')}),
+        ('Personal Information', {'fields': ('first_name', 'last_name')}),
+        ('Address Information', {'fields': ('city', 'postal_code', 'address')}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
+        ('Groups', {'fields': ('groups',)})
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'password1', 'password2', 'email',),
+        }),
+    )
+

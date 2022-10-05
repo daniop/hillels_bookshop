@@ -22,15 +22,19 @@
                     <div class="col-12 pb-1">
                         <div class="d-flex align-items-center justify-content-between mb-4">
                             <div class="dropdown ml-4">
-                                <button class="btn border dropdown-toggle" type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                            Sort by
-                                        </button>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="triggerId">
-                                    <a class="dropdown-item" href="#">Latest</a>
-                                    <a class="dropdown-item" href="#">Popularity</a>
-                                    <a class="dropdown-item" href="#">Best Rating</a>
-                                </div>
+                                    <form action="{% url 'shop:book_list' %}">
+                                        <label>
+                                            <select name="sort" class="form-control form-control-sm">
+                                                <option value="datedown" class="dropdown-item">Сначала новые</option>
+                                                <option value="dateup" class="dropdown-item">Сначала старые</option>
+                                                <option value="priceup" class="dropdown-item">По возрастанию цены</option>
+                                                <option value="pricedown" class="dropdown-item">По убыванию цены</option>
+                                                <option value="nameup" class="dropdown-item">По названию (а-я)</option>
+                                                <option value="namedown" class="dropdown-item">По названию (я-а)</option>
+                                            </select>
+                                        </label>
+                                        <input type="submit" class="btn btn-secondary btn-sm" value="Сортировать">
+                                    </form>
                             </div>
                         </div>
                     </div>
@@ -45,7 +49,7 @@
                             </div>
                             <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                 <h6 class="text-truncate mb-3"><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h6>
-                                <p class="text-truncate mb-3">от {{ book.author }}</p>
+                                <p class="text-truncate mb-3">от <a href="{% url 'shop:books_by_author' book.author.id %}">{{ book.author }}</a></p>
                                 <div class="d-flex justify-content-center">
                                     <h6>{{ book.price }} грн.</h6>
                                 </div>

@@ -1,0 +1,17 @@
+{% extends "shop/base.html" %}
+{% load bootstrap %}
+
+{% block title %} Регистрация {% endblock %}
+{% block header %}Регистрация{% endblock %}
+{% block subheader %}Регистрация{% endblock %}
+{% block content %}
+<form method="post" enctype='multipart/form-data'>
+  {% csrf_token %}
+    <div class="container px-4 px-lg-5">
+        {{ form|bootstrap }}
+    </div>
+    <div class="d-grid gap-2 container px-4 px-lg-5">
+        <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+    </div>
+</form>
+{% endblock %}

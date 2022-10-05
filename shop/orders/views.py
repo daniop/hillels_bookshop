@@ -16,12 +16,15 @@ def order_create(request):
         form = OrderCreateForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
+            if request.user.is_authenticated:
+                order.client = request.user
             order.save()
             for item in cart:
                 OrderItem.objects.create(order=order,
                                          books=item['book'],
                                          price=item['price'],
-                                         quantity=item['quantity'])
+                                         quantity=item['quantity'],
+                                         )
             # clear the cart
             cart.clear()
             # send email
@@ -33,6 +36,10 @@ def order_create(request):
             return redirect(reverse('shop:book_list'))
     else:
         form = OrderCreateForm()
+        if request.user.is_authenticated:
+            form = OrderCreateForm(
+                initial={'email': request.user.email}
+            )
     return render(request,
                   'orders/order/create.html',
                   {'cart': cart, 'form': form})

@@ -1,0 +1,20 @@
+{% extends "shop/base.html" %}
+{% load bootstrap %}
+    {% block title %} Обновить профиль {% endblock %}
+    {% block header %}Обновить профиль{% endblock %}
+    {% block subheader %}Обновить профиль{% endblock %}
+{% block content %}
+    <div class="container px-4 px-lg-5">
+        <form method="post" enctype='multipart/form-data'>
+        {% csrf_token %}
+            <div class="container px-4 px-lg-5">
+                {{ form|bootstrap }}
+            </div>
+            <div class="d-grid gap-2 container px-4 px-lg-5">
+                <button type="submit" class="btn btn-primary">Изменить</button>
+                <a href="{% url 'password_change' %}" class="btn btn-secondary">Поменять пароль</a></p>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}

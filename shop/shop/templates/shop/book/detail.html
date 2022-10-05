@@ -29,7 +29,7 @@
 
             <div class="col-lg-7 pb-5">
                 <h3 class="font-weight-semi-bold">{{ book.title}}</h3>
-                <p>от {{ book.author }}</p>
+                <p>от <a href="{% url 'shop:books_by_author' book.author.id %}">{{ book.author }}</a></p>
                 <h3 class="font-weight-semi-bold mb-4">{{ book.price }} грн</h3>
                 <div class="d-flex mb-3">
                     <p class="text-dark font-weight-medium mb-0 mr-3">Жанры:</p>
