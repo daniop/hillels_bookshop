@@ -1,6 +1,6 @@
 from django.db import models
 
-from shop.models import Book
+from shop.models import Book, Client
 
 
 class Order(models.Model):
@@ -23,6 +23,9 @@ class Order(models.Model):
                               choices=status_choices,
                               default='in_work',
                               verbose_name='Статус заказа')
+    client = models.ForeignKey(
+        'shop.Client', verbose_name='Клиент', related_name='orders', null=True, on_delete=models.SET_NULL
+    )
 
     class Meta:
         ordering = ['-created']
@@ -36,6 +39,7 @@ class Order(models.Model):
     def get_total_cost(self):
         total_cost = sum(item.get_cost() for item in self.items.all())
         return total_cost
+
 
 
 class OrderItem(models.Model):

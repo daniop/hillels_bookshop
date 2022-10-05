@@ -2,8 +2,6 @@ import os
 
 from celery import shared_task
 
-from decimal import Decimal
-
 from django.core.mail import send_mail
 
 import requests
@@ -118,23 +116,13 @@ def update_books():
                 available=True if len(book['bookinstances']) else False)
 
 
-# @shared_task
-# def update_books():
-#     url = 'http://stock:8000/api/books/'
-#     r = requests.get(url).json()
-#     update_list = []
-#     for book in r['results']:
-#         if Book.objects.filter(isbn=book['isbn']).exists():
-#             obj = Book.objects.get(isbn=book['isbn'])
-#             obj.title = book['title'],
-#             obj.summary = book['summary'],
-#             obj.price = book['price'],
-#             obj.book_id_in_stock = book['id'],
-#             obj.quantity_in_stock = len(book['bookinstances']),
-#             obj.available = True if len(book['bookinstances']) else False
-#             update_list.append(obj)
-#     Book.objects.bulk_update(
-#         update_list,
-#         ['title', 'author', 'summary', 'price', 'book_id_in_stock', 'quantity_in_stock', 'available'],
-#         batch_size=1000
-#     )
+@shared_task
+def update_orders():
+    url = 'http://stock:8000/api/orders/'
+    r = requests.get(url).json()
+    update_list = []
+    for obj in r['results']:
+        order = Order.objects.get(pk=obj['order_id_in_shop'])
+        order.status = obj['status']
+        update_list.append(order)
+    Order.objects.bulk_update(update_list, ['status'])

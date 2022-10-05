@@ -19,7 +19,7 @@
                             </div>
                             <div class="card-body border-left border-right text-center p-0 pt-4 pb-3">
                                 <h6 class="text-truncate mb-3"><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></h6>
-                                <p class="text-truncate mb-3">от {{ book.author }}</p>
+                                <p class="text-truncate mb-3">от <a href="{% url 'shop:books_by_author' book.author.id %}">{{ book.author }}</a></p>
                                 <div class="d-flex justify-content-center">
                                     <h6>{{ book.price }} грн.</h6>
                                 </div>

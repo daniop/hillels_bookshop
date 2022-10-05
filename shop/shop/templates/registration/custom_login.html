@@ -1,0 +1,14 @@
+<form method="post" action="{% url 'shop:login' %}" class="js-login-form">
+  {% csrf_token %}
+  <div class="modal-header">
+    <h4 class="modal-title">Вход</h4>
+  </div>
+  <div class="modal-body">
+    {% include 'registration/custom_login_form.html' %}
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+      <a href="{% url 'password_reset' %}" class="btn btn-secondary">Сбросить пароль</a>
+      <button type="submit" class="btn btn-primary">Вход</button>
+  </div>
+</form>
